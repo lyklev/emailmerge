@@ -23,14 +23,14 @@ Next, create one file with the e-mail contents, say 'mail.txt':
 Create a file with a header with field names, and addresses in
 'addresses.csv':
 
-  title;lastname;email
-  mr.;Jones;jones@example.com
-  professor;Smith;smith@example.com
+    title;lastname;email
+    mr.;Jones;jones@example.com
+    professor;Smith;smith@example.com
 
 
 Now, run
 
-  perl emailmerge.pl -s "RSVP succesful" -t mail.txt -r addresses.csv
+    perl emailmerge.pl -s "RSVP succesful" -t mail.txt -r addresses.csv
 
 This will send an e-mail to mr. Jones and professor Smith with the
 template filled in.
@@ -74,20 +74,20 @@ The following options are recognised:
 
 The following command-line arguments are recognised:
 
-  -r
-
-  --recipients   The file with e-mail recipients
-
-
-  -t
-
-  --template     The file with the e-mail template
-
-  -s
-  --subject      The subject of the e-mail
-
-  -R
-  --reply-to     The reply-to address (optional)
+    -r
+  
+    --recipients   The file with e-mail recipients
+  
+  
+    -t
+  
+    --template     The file with the e-mail template
+  
+    -s
+    --subject      The subject of the e-mail
+  
+    -R
+    --reply-to     The reply-to address (optional)
 
 
 ## Automatic fields
