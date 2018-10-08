@@ -1,0 +1,16 @@
+
+# The name of the SMTP host
+host:
+
+# 'starttls' or 'ssl', or '' for no SSL
+ssl: 
+
+# if you need authentiction, specify the username and password
+username: 
+password: 
+
+# default settings for e-mails; you can override these values on the command-line.
+mail:
+  from: 
+  reply-to:
+
