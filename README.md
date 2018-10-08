@@ -105,8 +105,26 @@ byte-order marking (BOM). These are three bytes at the start of the file.
 The current version cannot handle these yet. Use an editor like VIM to
 remove the BOM bytes. In VIM, open the file, then do 
 
-  :set nobomb
-  :wq
+    :set nobomb
+    :wq
+
+
+## Installation
+
+You need at least the following Perl libraries installed:
+
+    Email::MIME
+    Email::Sender
+    Email::Sender::Simple
+    Email::Sender::Transport::SMTP
+    Email::Sender::Transport::SMTP::Persistent
+    YAML
+
+On a Fedora or RedHat system, you can install these packages with:
+
+    dnf install perl-Email-MIME perl-Email-Sender perl-Email-Sender-Simple \
+      perl-Email-Sender-Transport perl-Email-Sender-Transport-Persistent   \
+      perl-YAML
 
 
 ## Version
