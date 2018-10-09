@@ -4,21 +4,21 @@
 
 Create a mail configuration once, 'emailmerge.cfg':
 
-  # SMTP host
-  server: mail.example.com
-  
-  # from address
-  from: luke@example.com
+    # SMTP host
+    server: mail.example.com
+    
+    # from address
+    from: luke@example.com
 
 Next, create one file with the e-mail contents, say 'mail.txt':
 
-  Dear [% title %] [% lastname %],
-
-  It is our pleasure to confirm your RSVP.
-
-  Kind regards,
-
-  [% sender %]
+    Dear [% title %] [% lastname %],
+    
+    It is our pleasure to confirm your RSVP.
+    
+    Kind regards,
+    
+    [% sender %]
 
 Create a file with a header with field names, and addresses in
 'addresses.csv':
