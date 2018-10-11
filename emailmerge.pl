@@ -24,6 +24,7 @@ my $from_address;
 my $reply_to_address;
 my $subject;
 my $verbose;
+my $help;
 
 Getopt::Long::Configure ("bundling");
 
@@ -33,8 +34,24 @@ GetOptions(
   "from|f=s"         => \$from_address,
   "reply-to|R=s"     => \$reply_to_address,
   "subject|s=s"      => \$subject,
+  "help|h"           => \$help,
   "verbose|v"        => \$verbose,
 ) or die("error in command line arguments");
+
+unless (
+  defined $mail_template_file &&
+  defined $recipients_file    &&
+  defined $from_address       &&
+  defined $subject            ||
+  defined $help
+) {
+  print("Missing arguments; usage:\n",
+    "  --template <email template file>\n",
+    "  --from     <from address>\n",
+    "  --subject  <subject>\n",
+    "  [--reply-to  <reply-to address>]\n");
+  exit;
+}
 
 # read fixed configuration
 
