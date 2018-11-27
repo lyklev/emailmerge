@@ -124,7 +124,7 @@ for my $recipient (@recipients) {
   }
 
   if ($verbose) {
-    print("Mail body to ", $recipient->{'lastname'}, 
+    print("Mail body to ", $recipient->{'email'}, 
       " follows:\n", "-" x 72, "\n", $mail_body, "-" x 72, "\n");
   }
 
