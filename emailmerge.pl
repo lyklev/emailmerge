@@ -8,7 +8,7 @@ use warnings;
 
 use Email::MIME;
 use Email::Sender;
-use Email::Sender::Simple qw(sendmail);
+use Email::Sender::Simple qw(try_to_sendmail);
 use Email::Sender::Transport::SMTP qw();
 use Email::Sender::Transport::SMTP::Persistent;
 use YAML ();
@@ -24,6 +24,8 @@ my $from_address;
 my $reply_to_address;
 my $subject;
 my $verbose;
+my $dry_run;
+my $sleep;
 my $help;
 
 Getopt::Long::Configure ("bundling");
@@ -36,6 +38,8 @@ GetOptions(
   "subject|s=s"      => \$subject,
   "help|h"           => \$help,
   "verbose|v"        => \$verbose,
+  "dry-run"          => \$dry_run,
+  "sleep"            => \$sleep,
 ) or die("error in command line arguments");
 
 unless (
@@ -76,17 +80,25 @@ my $header_line = <RCPTS>;
 chomp($header_line);
 my @field_names = split(/;/, $header_line);
 
+my $line_no = 1;
 while (my $line = <RCPTS>) {
   chomp($line);
+  $line_no++;
+
   my @fields = split(/;/, $line);
+  
+  if ($#fields != $#field_names) {
+    print(STDERR "*** error on line no $line_no: expected " ,
+      $#field_names + 1 , " ,got ", $#fields + 1, "\n");
+    exit(1);
+  }
   my %rec;
   @rec{@field_names} = @fields;
   push(@recipients, \%rec);
+  print($rec{'email'}, "\n");
 }
 
 close(RCPTS);
-
-
 
 # send the actual e-mails
 
@@ -99,11 +111,17 @@ my $mail_transport = Email::Sender::Transport::SMTP::Persistent -> new(
   sasl_password    => $cfg_hashref -> {'password'},
 );
 
+my @failed_recipients;
+
 for my $recipient (@recipients) {
   $recipient -> {'sender'}   = $from_address;
   $recipient -> {'reply-to'} = $reply_to_address;
   my $mail_body;
-  $tt -> process($mail_template_file, $recipient, \$mail_body);
+  my $rv = $tt -> process($mail_template_file, $recipient, \$mail_body);
+  unless ($rv) {
+    print("Error:", $tt -> error(), "\n");
+    exit(1);
+  }
 
   if ($verbose) {
     print("Mail body to ", $recipient->{'lastname'}, 
@@ -126,12 +144,31 @@ for my $recipient (@recipients) {
   );
   $email -> encoding_set ('base64');
 
-  sendmail(
-    $email,
-    {
-      transport  => $mail_transport,
+  if ($verbose) {
+    print("-" x 72, "\n",
+      "To     :", $recipient -> {'email'}, "\n",
+      "Subject:", $subject, "\n",
+      $mail_body);
+  }
+  unless ($dry_run) {
+    my $rv = try_to_sendmail(
+      $email,
+      {
+        transport  => $mail_transport,
+      }
+    );
+    unless ($rv) {
+      push(@failed_recipients, $recipient -> {'email'});
     }
-  );
 
+  }
+  if (defined $sleep) {
+    sleep $sleep;
+  }
+} # next email
+
+print("Failed recipients:\n");
+for my $failed_recipient (@failed_recipients) {
+  print("$failed_recipient\n");
 }
 
